@@ -1,0 +1,14 @@
+.profile__avatar-icon {
+    position: relative;
+    background-color: rgba(0, 0, 0, 0);
+    transition: visibility .5s, opacity .2s ease;
+    cursor: pointer;
+}
+
+.profile__avatar-icon:hover .profile__avatar {
+    opacity: 0.2;
+}
+
+.profile__avatar-icon:hover .profile__avatar-update {
+    visibility: visible;
+}

@@ -1,0 +1,17 @@
+.profile__info {
+    padding-top: 26px;
+    display: grid;
+    grid-template-rows: minmax(min-content, max-content) 1fr;
+    grid-template-areas:
+    "name edit-button"
+    "about about";
+}
+
+@media screen and (min-width: 900px) {
+    .profile__info {
+        padding-top: 0;
+        padding-left: 30px;
+        grid-area: info;
+        justify-self: start;
+    }
+}

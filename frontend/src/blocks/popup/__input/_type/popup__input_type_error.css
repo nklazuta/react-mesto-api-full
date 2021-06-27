@@ -1,0 +1,8 @@
+.popup__input_type_error {
+    border-bottom: 1px solid #FF0000;
+    margin: 0;
+}
+
+.popup__input_type_error:nth-child(4) {
+    margin: 0;
+}

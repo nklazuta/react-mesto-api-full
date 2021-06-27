@@ -1,0 +1,14 @@
+.popup__close-button_type_info-tooltip {
+    width: 30px;
+    height: 30px;
+    top: -51px;
+    right: 140px;
+}
+
+@media screen and (min-width: 900px) {
+    .popup__close-button_type_info-tooltip {
+        width: 40px;
+        height: 40px;
+        right: -42px;
+    }
+}
