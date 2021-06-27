@@ -32,16 +32,14 @@ export default function App() {
   const history = useHistory();
 
   useEffect(() => {
-    api
-      .getInitialCards()
-      .then((res) => setCards(res))
-      .catch((err) => console.log("Ошибка: ", err));
-
-    api
-      .getUserInfo()
-      .then((res) => setCurrentUser(res))
-      .catch((err) => console.log("Ошибка: ", err));
+    loadUserInfo();
+    loadCards();
   }, []);
+
+  useEffect(() => {
+    loadUserInfo();
+    loadCards();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     tokenCheck();
@@ -51,10 +49,25 @@ export default function App() {
     if (isLoggedIn) {
       history.push("/");
     }
-  }, [isLoggedIn]);
+  }, [history, isLoggedIn]);
+
+  const loadUserInfo = () => {
+    api
+      .getUserInfo()
+      .then((res) => setCurrentUser(res))
+      .catch((err) => console.log("Ошибка: ", err));
+  };
+
+  const loadCards = () => {
+    api
+      .getInitialCards()
+      .then((res) => setCards(res.data))
+      .catch((err) => console.log("Ошибка: ", err));
+  }
 
   const handleCardLike = (card) => {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    const isLiked = card.likes.some((i) => i === currentUser._id);
+
     api
       .changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
@@ -141,15 +154,10 @@ export default function App() {
   };
 
   const tokenCheck = () => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      return;
-    }
-
     auth
-      .getContent(jwt)
+      .getContent()
       .then(res => {
-        setUserEmail(res.data.email);
+        setUserEmail(res.email);
         setIsLoggedIn(true);
       })
       .catch((err) => console.log("Ошибка: ", err));
@@ -162,7 +170,7 @@ export default function App() {
         setUserEmail(res.data.email);
         setIsInfoTooltipOpen(true);
         setTypeInfoTooltip('success');
-        history.push("/sign-in");
+        history.push("/signin");
       })
       .catch((err) => {
         console.log("Ошибка: ", err);
@@ -175,9 +183,8 @@ export default function App() {
     return auth
       .authorize(data)
       .then(res => {
-        setUserEmail(data.email);
+        setUserEmail(res.data.email);
         setIsLoggedIn(true);
-        localStorage.setItem('jwt', res.token);
         history.push("/");
       })
       .catch((err) => {
@@ -188,9 +195,13 @@ export default function App() {
   };
 
   const onLogout = () => {
-    setIsLoggedIn(false);
-    localStorage.removeItem("jwt");
-    history.push("/sign-in");
+    return auth
+      .logout()
+      .then (() => {
+        setIsLoggedIn(false);
+        history.push("/signin");
+      })
+      .catch((err) => console.log("Ошибка: ", err))
   };
 
   return (
@@ -210,15 +221,15 @@ export default function App() {
             {...{ isLoggedIn, cards, onCardDelete }}
           />
 
-          <Route path="/sign-up">
+          <Route path="/signup">
             <Register {...{ onRegister }} />
           </Route>
 
-          <Route path="/sign-in">
+          <Route path="/signin">
             <Login {...{ onLogin }} />
           </Route>
           <Route>
-            {isLoggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+            {isLoggedIn ? <Redirect to="/" /> : <Redirect to="/signin" />}
           </Route>
         </Switch>
         <Footer />

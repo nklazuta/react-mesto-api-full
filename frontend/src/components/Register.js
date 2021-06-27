@@ -16,8 +16,8 @@ function Register({ onRegister }) {
   const handleSubmit = evt => {
     evt.preventDefault();
     onRegister({
+      email,
       password,
-      email
     });
   };
 
@@ -52,7 +52,7 @@ function Register({ onRegister }) {
         </button>
       </form>
       <p className="auth__login-redirect">
-        Уже зарегистрированы? <Link to="/sign-in" className="auth__login-link">Войти</Link>
+        Уже зарегистрированы? <Link to="/signin" className="auth__login-link">Войти</Link>
       </p>
     </div>
   );
