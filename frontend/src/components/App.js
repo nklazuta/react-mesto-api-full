@@ -34,7 +34,7 @@ export default function App() {
   useEffect(() => {
     loadUserInfo();
     loadCards();
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     tokenCheck();
