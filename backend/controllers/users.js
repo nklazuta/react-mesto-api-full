@@ -121,7 +121,7 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .send({ data: publicUser.toJSON() });
+        .send({ data: publicUser });
     })
     .catch((err) => {
       next(new AuthError(err.message));
