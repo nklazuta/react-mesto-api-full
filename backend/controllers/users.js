@@ -102,8 +102,13 @@ module.exports.updateUserAvatar = (req, res, next) => {
 };
 
 module.exports.login = (req, res, next) => {
-  User.findUserByCredentials(req.body)
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
     .then((user) => {
+      // eslint-disable-next-line no-shadow
+      const { password, ...publicUser } = user;
+
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
@@ -116,7 +121,7 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .send({ data: user.toJSON() });
+        .send({ data: publicUser.toJSON() });
     })
     .catch((err) => {
       next(new AuthError(err.message));
@@ -124,5 +129,5 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.logout = (req, res) => {
-  res.clearCookie('jwt').status(200).end();
+  res.clearCookie('jwt');
 };
