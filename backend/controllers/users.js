@@ -102,9 +102,11 @@ module.exports.updateUserAvatar = (req, res, next) => {
 };
 
 module.exports.login = (req, res, next) => {
-  User.findUserByCredentials(req.body)
+  console.log(req.body);
+
+  return User.findUserByCredentials(req.body)
     .then((user) => {
-      const { password, ...publicUser } = user.toObject();
+      const { password, ...publicUser } = user;
 
       const token = jwt.sign(
         { _id: user._id },
@@ -116,9 +118,9 @@ module.exports.login = (req, res, next) => {
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
-          sameSite: true,
+          sameSite: false,
         })
-        .send({ data: publicUser });
+        .send({ data: publicUser.toJSON() });
     })
     .catch((err) => {
       next(new AuthError(err.message));
@@ -126,6 +128,7 @@ module.exports.login = (req, res, next) => {
 };
 
 module.exports.logout = (req, res, next) => {
+  console.log(req.user._id);
   User.findById(req.user._id)
     .then(() => res.clearCookie('jwt').status(200).end())
     .catch(next);
