@@ -9,7 +9,6 @@ const {
   getUserById,
   updateUser,
   updateUserAvatar,
-  logout,
 } = require('../controllers/users');
 
 router.get('/', getUsers);
@@ -30,7 +29,5 @@ router.patch('/me/avatar', celebrate({
     avatar: Joi.string().required().pattern(URL_PATTERN).message('Это поле должно содержать ссылку'),
   }),
 }), updateUserAvatar);
-
-router.get('/logout', logout);
 
 module.exports = router;
