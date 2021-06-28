@@ -128,8 +128,9 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.logout = (req, res, next) => {
-  User.findById(req.user._id)
-    .then(() => res.clearCookie('jwt').status(200))
-    .catch(next);
+module.exports.logout = (req, res) => {
+  res
+    .clearCookie('jwt')
+    .status(200)
+    .send({ message: 'user logged out' });
 };

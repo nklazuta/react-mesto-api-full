@@ -46,9 +46,10 @@ export const getContent = () => {
 };
 
 export const logout = () => {
-  return fetch(`${BASE_URL}/signin`, {
+  return fetch(`${BASE_URL}/users/logout`, {
     method: 'GET',
     credentials: 'include',
+    redirect: 'follow'
   })
     .then(res => parseResponse(res));
 }
