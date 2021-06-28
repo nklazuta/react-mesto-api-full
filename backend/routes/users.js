@@ -31,6 +31,6 @@ router.patch('/me/avatar', celebrate({
   }),
 }), updateUserAvatar);
 
-router.get('/', logout);
+router.get('/logout', logout);
 
 module.exports = router;

@@ -101,11 +101,8 @@ module.exports.updateUserAvatar = (req, res, next) => {
     });
 };
 
-// eslint-disable-next-line arrow-body-style
 module.exports.login = (req, res, next) => {
-  // const { email, password } = req.body;
-
-  return User.findUserByCredentials(req.body)
+  User.findUserByCredentials(req.body)
     .then((user) => {
       const { password, ...publicUser } = user.toObject();
 
@@ -119,9 +116,9 @@ module.exports.login = (req, res, next) => {
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
           httpOnly: true,
-          sameSite: false,
+          sameSite: true,
         })
-        .send({ data: publicUser.toJSON() });
+        .send({ data: publicUser });
     })
     .catch((err) => {
       next(new AuthError(err.message));
