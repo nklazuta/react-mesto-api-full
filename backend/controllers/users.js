@@ -107,7 +107,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // eslint-disable-next-line no-shadow
-      const { password, ...publicUser } = user;
+      const { password, ...publicUser } = user.toObject();
 
       const token = jwt.sign(
         { _id: user._id },
@@ -128,6 +128,8 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.logout = (req, res) => {
-  res.clearCookie('jwt');
+module.exports.logout = (req, res, next) => {
+  User.findById(req.user._id)
+    .then(() => res.clearCookie('jwt').status(200))
+    .catch(next);
 };
