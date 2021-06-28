@@ -102,9 +102,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
 };
 
 module.exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
+  User.findUserByCredentials(req.body)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
@@ -125,8 +123,6 @@ module.exports.login = (req, res, next) => {
     });
 };
 
-module.exports.logout = (req, res, next) => {
-  User.findById(req.user._id)
-    .then(() => res.clearCookie('jwt').status(200).end())
-    .catch(next);
+module.exports.logout = (req, res) => {
+  res.clearCookie('jwt').status(200).end();
 };
