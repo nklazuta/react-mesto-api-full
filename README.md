@@ -3,3 +3,4 @@
   
 Публичный IP-адрес сервера: 217.28.231.144
 Домен: https://mesto.nlazuta.nomoredomains.monster/
+Api: https://api.mesto.nlazuta.nomoredomains.monster/

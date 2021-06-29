@@ -23,13 +23,23 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .orFail(new Error('NotFound'))
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('Нельзя удалять карточки других пользователей');
       }
       res.send(card);
+    })
+    .then((card) => {
+      card.findByIdAndRemove(card._id)
+        .then((item) => {
+          if (!item) {
+            return Promise.reject(new ValidationError('Передан некорректный _id'));
+          }
+
+          return res.send(item);
+        });
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
