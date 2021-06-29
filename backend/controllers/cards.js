@@ -30,7 +30,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ForbiddenError('Нельзя удалять карточки других пользователей');
       } else {
         Card.findByIdAndRemove(card._id)
-          .then((cards) => res.send(cards));
+          .then((item) => res.send(item));
       }
     })
     .catch((err) => {
