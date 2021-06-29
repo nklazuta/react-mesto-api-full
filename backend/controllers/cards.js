@@ -28,19 +28,10 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('Нельзя удалять карточки других пользователей');
+      } else {
+        Card.findByIdAndRemove(card._id)
+          .then((cards) => res.send(cards));
       }
-
-      return card;
-    })
-    .then((card) => {
-      card.findByIdAndRemove(card._id)
-        .then((item) => {
-          if (!item) {
-            return Promise.reject(new ValidationError('Передан некорректный _id'));
-          }
-
-          return res.send(item);
-        });
     })
     .catch((err) => {
       if (err.message === 'NotFound') {
