@@ -27,7 +27,7 @@ const app = express();
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // за 15 минут
-  max: 1000, // можно совершить максимум 100 запросов с одного IP
+  max: 100, // можно совершить максимум 100 запросов с одного IP
 });
 
 app.use(cors({
@@ -45,12 +45,6 @@ app.use(limiter);
 mongoose.connect(MONGO_URL, MONGO_CONFIG);
 
 app.use(requestLogger);
-
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
