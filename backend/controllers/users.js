@@ -1,4 +1,4 @@
-// const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
@@ -6,7 +6,7 @@ const NotFoundError = require('../errors/not-found-err');
 const ValidationError = require('../errors/validation-err');
 const AuthError = require('../errors/auth-err');
 const EmailAlreadyExistError = require('../errors/email-already-exist-err');
-// const { SALT_ROUNDS } = require('../utils/constants');
+const { SALT_ROUNDS } = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -46,14 +46,16 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name, about, avatar, email,
   } = req.body;
 
-  User.create({
-    name, about, avatar, email, password,
-  })
+  bcrypt.hash(req.body.password, SALT_ROUNDS)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => {
-      res.send(user);
+      const { password, ...publicUser } = user.toObject();
+      res.send({ data: publicUser });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -105,6 +107,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       // eslint-disable-next-line no-shadow
+      const { password, ...publicUser } = user.toObject();
 
       const token = jwt.sign(
         { _id: user._id },
@@ -118,7 +121,7 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .send(user);
+        .send({ data: publicUser });
     })
     .catch((err) => {
       next(new AuthError(err.message));
