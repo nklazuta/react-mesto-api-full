@@ -45,7 +45,13 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  User.create(req.body)
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  User.create({
+    name, about, avatar, email, password,
+  })
     .then((user) => {
       res.send(user);
     })
